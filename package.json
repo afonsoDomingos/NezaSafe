@@ -6,6 +6,7 @@
     "start": "node api/risks.js"
   },
   "dependencies": {
+    "dotenv": "^17.4.2",
     "mongoose": "^8.3.2"
   }
 }
