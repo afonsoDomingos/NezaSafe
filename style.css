@@ -1,23 +1,23 @@
 :root {
-    /* Color Palette - Dark/Premium Theme */
-    --bg-main: #0f172a;
-    --bg-surface: #1e293b;
-    --bg-surface-hover: #334155;
+    /* Color Palette - Security / SOC Theme */
+    --bg-main: #0a0e17;
+    --bg-surface: #111827;
+    --bg-surface-hover: #1f2937;
     
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
+    --text-primary: #f3f4f6;
+    --text-secondary: #9ca3af;
+    --text-muted: #6b7280;
     
-    --accent-primary: #6366f1;
-    --accent-hover: #4f46e5;
+    --accent-primary: #06b6d4;
+    --accent-hover: #0891b2;
     
-    --border-color: #334155;
+    --border-color: #1f2937;
     
     /* Status Colors */
     --status-low: #3b82f6; /* Blue */
-    --status-medium: #eab308; /* Yellow */
+    --status-medium: #f59e0b; /* Amber */
     --status-high: #ef4444; /* Red */
-    --status-resolved: #10b981; /* Green */
+    --status-resolved: #10b981; /* Emerald */
     
     /* Shadows */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -180,7 +180,7 @@ body {
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid var(--border-color);
-    background-color: rgba(15, 23, 42, 0.8);
+    background-color: rgba(10, 14, 23, 0.85);
     backdrop-filter: blur(10px);
     z-index: 5;
 }
