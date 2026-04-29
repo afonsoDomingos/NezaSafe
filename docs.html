@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEZA - Documentação Pública</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { overflow-y: auto; }
+        .docs-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            color: var(--text-primary);
+        }
+        .docs-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .docs-header h1 {
+            color: var(--accent-primary);
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .docs-section {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .docs-section h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        .docs-section p, .docs-section li {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .docs-section ul {
+            padding-left: 20px;
+        }
+        .api-endpoint {
+            background-color: var(--bg-main);
+            padding: 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            color: var(--accent-primary);
+            margin: 10px 0;
+            display: inline-block;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--accent-primary);
+            text-decoration: none;
+        }
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="docs-container">
+        <a href="index.html" class="back-btn">&larr; Voltar ao Dashboard</a>
+        
+        <div class="docs-header">
+            <h1>Documentação Pública - NEZA</h1>
+            <p>Guia completo de funcionamento e integração da plataforma de Gestão de Riscos</p>
+        </div>
+
+        <div class="docs-section">
+            <h2>1. Introdução</h2>
+            <p>O Sistema Integrado de Monitoramento e Gestão de Riscos Digitais (NEZA) é uma plataforma desenhada para operações de segurança cibernética (SOC). Ele permite o registro, monitoramento e a resolução de vulnerabilidades e eventos de segurança em tempo real.</p>
+        </div>
+
+        <div class="docs-section">
+            <h2>2. Como o Sistema Funciona</h2>
+            <ul>
+                <li><strong>Dashboard Interativo:</strong> Exibe métricas cruciais como riscos ativos, críticos e resolvidos. O gráfico de distribuição é alimentado dinamicamente via MongoDB.</li>
+                <li><strong>Gestão de Ameaças:</strong> Um módulo CRUD onde operadores podem registrar novas ameaças classificando-as por nível de severidade (Baixo, Médio, Alto).</li>
+                <li><strong>Sistema de Alertas:</strong> Sempre que uma ameaça de nível <strong>Alto</strong> é registrada, o sistema dispara notificações push (Toasts) na interface.</li>
+                <li><strong>Relatórios:</strong> Um log histórico de todos os eventos registrados no banco de dados para fins de auditoria.</li>
+            </ul>
+        </div>
+
+        <div class="docs-section">
+            <h2>3. API Pública (Endpoints REST)</h2>
+            <p>A plataforma NEZA opera através de um backend Serverless. Se você deseja integrar o NEZA a outras ferramentas (como SIEMs, firewalls ou scripts Python), utilize os seguintes endpoints:</p>
+            
+            <h3>Listar Riscos (GET)</h3>
+            <div class="api-endpoint">GET /api/risks</div>
+            <p>Retorna um array JSON contendo todas as ameaças armazenadas no banco de dados MongoDB.</p>
+
+            <h3>Registrar Novo Risco (POST)</h3>
+            <div class="api-endpoint">POST /api/risks</div>
+            <p>Espera um corpo JSON com a estrutura: <code>{ name, description, level, status }</code>. Retorna 201 Created.</p>
+
+            <h3>Resolver ou Atualizar (PUT)</h3>
+            <div class="api-endpoint">PUT /api/risks</div>
+            <p>Espera o ID do risco e os campos a serem atualizados. Exemplo: <code>{ id: "RSK-101", status: "resolvido" }</code>.</p>
+
+            <h3>Remover Registro (DELETE)</h3>
+            <div class="api-endpoint">DELETE /api/risks?id=RSK-XYZ</div>
+            <p>Apaga permanentemente o registro de ameaça da base de dados.</p>
+        </div>
+
+        <div class="docs-section">
+            <h2>4. Segurança e Privacidade</h2>
+            <p>Todos os dados transitam por HTTPS e são armazenados em um cluster seguro do MongoDB Atlas. Nenhuma credencial de API ou banco de dados é exposta no lado do cliente. Esta documentação serve como referência de integração.</p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px; font-size: 12px; color: var(--text-muted);">
+            Powered By Muv Educação & Engenharia
+        </div>
+    </div>
+</body>
+</html>
