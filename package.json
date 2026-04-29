@@ -1,0 +1,11 @@
+{
+  "name": "neza-safe",
+  "version": "1.0.0",
+  "description": "Sistema Integrado de Monitoramento e Gestão de Riscos Digitais - NEZA",
+  "scripts": {
+    "start": "node api/risks.js"
+  },
+  "dependencies": {
+    "mongoose": "^8.3.2"
+  }
+}

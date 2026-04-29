@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEZA - Monitoramento e Gestão de Riscos Digitais</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>NEZA</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active" data-view="dashboard">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li data-view="risks">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>Gestão de Riscos</span>
+                    </li>
+                    <li data-view="reports">
+                        <i class="fa-solid fa-file-lines"></i>
+                        <span>Relatórios</span>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=1e293b&color=fff" alt="User">
+                    </div>
+                    <div class="details">
+                        <span class="name">Administrador</span>
+                        <span class="role">SecOps Manager</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <header class="topbar">
+                <div class="page-title">
+                    <h1 id="current-page-title">Dashboard Principal</h1>
+                </div>
+                <div class="topbar-actions">
+                    <div class="search-bar">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" placeholder="Pesquisar riscos...">
+                    </div>
+                    <div class="notifications">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="badge" id="alert-badge">0</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Alerts System -->
+            <div class="alerts-container" id="alerts-container">
+                <!-- Alerts will be injected here -->
+            </div>
+
+            <!-- Views -->
+            <div class="views">
+                <!-- Dashboard View -->
+                <section id="view-dashboard" class="view active">
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon blue">
+                                <i class="fa-solid fa-radar"></i>
+                            </div>
+                            <div class="metric-details">
+                                <h3>Riscos Ativos</h3>
+                                <p class="value" id="metric-active">0</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon green">
+                                <i class="fa-solid fa-check-double"></i>
+                            </div>
+                            <div class="metric-details">
+                                <h3>Riscos Resolvidos</h3>
+                                <p class="value" id="metric-resolved">0</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon red">
+                                <i class="fa-solid fa-fire-flame-curved"></i>
+                            </div>
+                            <div class="metric-details">
+                                <h3>Riscos Críticos (Altos)</h3>
+                                <p class="value" id="metric-high">0</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon purple">
+                                <i class="fa-solid fa-heart-pulse"></i>
+                            </div>
+                            <div class="metric-details">
+                                <h3>Nível de Ameaça</h3>
+                                <p class="value" id="metric-threat">Baixo</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="charts-section">
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h2>Distribuição de Riscos</h2>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="risksChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="recent-risks-card">
+                            <div class="card-header">
+                                <h2>Atividade Recente</h2>
+                                <button class="btn-text" onclick="switchView('risks')">Ver todos</button>
+                            </div>
+                            <div class="card-body">
+                                <ul class="activity-list" id="activity-list">
+                                    <!-- Populated by JS -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Risks View -->
+                <section id="view-risks" class="view">
+                    <div class="risks-header">
+                        <h2>Gerenciamento de Ameaças</h2>
+                        <button class="btn-primary" id="btn-add-risk">
+                            <i class="fa-solid fa-plus"></i> Novo Risco
+                        </button>
+                    </div>
+
+                    <!-- Add Risk Form (Hidden by default) -->
+                    <div class="form-card" id="form-add-risk" style="display: none;">
+                        <h3>Cadastrar Nova Ameaça</h3>
+                        <form id="risk-form">
+                            <div class="form-group">
+                                <label for="risk-name">Nome da Ameaça</label>
+                                <input type="text" id="risk-name" required placeholder="Ex: Injeção de SQL no Login">
+                            </div>
+                            <div class="form-group">
+                                <label for="risk-desc">Descrição</label>
+                                <textarea id="risk-desc" required placeholder="Descreva os detalhes da vulnerabilidade..."></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="risk-level">Nível de Risco</label>
+                                    <select id="risk-level">
+                                        <option value="baixo">Baixo</option>
+                                        <option value="medio">Médio</option>
+                                        <option value="alto">Alto</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="risk-status">Status Inicial</label>
+                                    <select id="risk-status">
+                                        <option value="ativo">Ativo</option>
+                                        <option value="resolvido">Resolvido</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" id="btn-cancel-risk">Cancelar</button>
+                                <button type="submit" class="btn-primary">Salvar Risco</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="risks-list-container">
+                        <div class="list-filters">
+                            <button class="filter-btn active" data-filter="all">Todos</button>
+                            <button class="filter-btn" data-filter="ativo">Ativos</button>
+                            <button class="filter-btn" data-filter="resolvido">Resolvidos</button>
+                        </div>
+                        <div class="risks-grid" id="risks-grid">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Reports View -->
+                <section id="view-reports" class="view">
+                    <div class="reports-header">
+                        <h2>Relatório Consolidado</h2>
+                        <button class="btn-primary" onclick="exportReport()">
+                            <i class="fa-solid fa-download"></i> Exportar CSV
+                        </button>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome da Ameaça</th>
+                                    <th>Nível</th>
+                                    <th>Status</th>
+                                    <th>Data de Registro</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reports-table-body">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
