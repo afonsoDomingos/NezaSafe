@@ -381,6 +381,12 @@ body {
     gap: 24px;
 }
 
+.charts-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
 .chart-card, .recent-risks-card {
     background-color: var(--bg-surface);
     border: 1px solid var(--border-color);

@@ -1,5 +1,6 @@
 let risksData = [];
 let chartInstance = null;
+let statusChartInstance = null;
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', async () => {
@@ -113,7 +114,7 @@ function updateDashboard() {
         `;
     });
 
-    if(!chartInstance) {
+    if(!chartInstance || !statusChartInstance) {
         initChart();
     } else {
         updateChart();
@@ -196,30 +197,115 @@ function renderReportsTable() {
     });
 }
 
+// Chart Plugins
+const centerTextPlugin = {
+    id: 'centerText',
+    beforeDraw: function(chart) {
+        if (chart.config.type === 'doughnut') {
+            const width = chart.width,
+                  height = chart.height,
+                  ctx = chart.ctx;
+                  
+            ctx.restore();
+            
+            const active = risksData.filter(r => r.status === 'ativo').length;
+            
+            const fontSize = (height / 114).toFixed(2);
+            ctx.font = "bold " + fontSize + "em Inter";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "#f3f4f6";
+
+            const text = active.toString(),
+                  textX = Math.round((width - ctx.measureText(text).width) / 2),
+                  textY = height / 2 - 10;
+
+            ctx.fillText(text, textX, textY);
+            
+            ctx.font = "normal " + (fontSize * 0.3) + "em Inter";
+            ctx.fillStyle = "#9ca3af";
+            const text2 = "Riscos Ativos",
+                  text2X = Math.round((width - ctx.measureText(text2).width) / 2),
+                  text2Y = height / 2 + 20;
+                  
+            ctx.fillText(text2, text2X, text2Y);
+            ctx.save();
+        }
+    }
+};
+
 // Chart.js Setup
 function initChart() {
-    const ctx = document.getElementById('risksChart');
-    if (!ctx) return;
-    
-    Chart.defaults.color = '#94a3b8';
+    Chart.defaults.color = '#9ca3af';
     Chart.defaults.font.family = "'Inter', sans-serif";
 
-    chartInstance = new Chart(ctx.getContext('2d'), {
-        type: 'doughnut',
-        data: getChartData(),
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '70%',
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: { padding: 20, usePointStyle: true }
-                }
-            },
-            borderWidth: 0
-        }
-    });
+    // Doughnut Chart
+    const ctxDoughnut = document.getElementById('risksChart');
+    if (ctxDoughnut) {
+        chartInstance = new Chart(ctxDoughnut.getContext('2d'), {
+            type: 'doughnut',
+            data: getChartData(),
+            plugins: [centerTextPlugin],
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '80%',
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { 
+                            padding: 20, 
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(10, 14, 23, 0.9)',
+                        titleFont: { size: 13, family: 'Inter' },
+                        bodyFont: { size: 14, weight: 'bold', family: 'Inter' },
+                        padding: 12,
+                        cornerRadius: 8,
+                        borderColor: 'rgba(255,255,255,0.1)',
+                        borderWidth: 1
+                    }
+                },
+                layout: { padding: 10 }
+            }
+        });
+    }
+
+    // Bar Chart
+    const ctxBar = document.getElementById('statusChart');
+    if (ctxBar) {
+        statusChartInstance = new Chart(ctxBar.getContext('2d'), {
+            type: 'bar',
+            data: getStatusChartData(),
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(10, 14, 23, 0.9)',
+                        titleFont: { size: 13, family: 'Inter' },
+                        bodyFont: { size: 14, weight: 'bold', family: 'Inter' },
+                        padding: 12,
+                        cornerRadius: 8,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
+                        ticks: { stepSize: 1 }
+                    },
+                    x: {
+                        grid: { display: false, drawBorder: false }
+                    }
+                },
+                borderRadius: 4
+            }
+        });
+    }
 }
 
 function getChartData() {
@@ -228,13 +314,41 @@ function getChartData() {
     const medios = active.filter(r => r.level === 'medio').length;
     const baixos = active.filter(r => r.level === 'baixo').length;
 
+    const isEmpty = altos === 0 && medios === 0 && baixos === 0;
+
     return {
         labels: ['Alto Risco', 'Médio Risco', 'Baixo Risco'],
         datasets: [{
-            data: [altos, medios, baixos],
-            backgroundColor: ['#ef4444', '#eab308', '#3b82f6'],
-            borderWidth: 0,
-            hoverOffset: 4
+            data: isEmpty ? [1] : [altos, medios, baixos],
+            backgroundColor: isEmpty ? ['#1f2937'] : ['#ef4444', '#f59e0b', '#06b6d4'],
+            borderWidth: 4,
+            borderColor: '#111827',
+            hoverOffset: 6,
+            borderRadius: isEmpty ? 0 : 5
+        }]
+    };
+}
+
+function getStatusChartData() {
+    const ativos = risksData.filter(r => r.status === 'ativo').length;
+    const resolvidos = risksData.filter(r => r.status === 'resolvido').length;
+
+    return {
+        labels: ['Riscos Ativos', 'Riscos Resolvidos'],
+        datasets: [{
+            label: 'Eventos',
+            data: [ativos, resolvidos],
+            backgroundColor: [
+                'rgba(239, 68, 68, 0.8)',
+                'rgba(16, 185, 129, 0.8)'
+            ],
+            borderColor: [
+                '#ef4444',
+                '#10b981'
+            ],
+            borderWidth: 1,
+            borderRadius: 6,
+            barThickness: 40
         }]
     };
 }
@@ -243,6 +357,10 @@ function updateChart() {
     if(chartInstance) {
         chartInstance.data = getChartData();
         chartInstance.update();
+    }
+    if(statusChartInstance) {
+        statusChartInstance.data = getStatusChartData();
+        statusChartInstance.update();
     }
 }
 
