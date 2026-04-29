@@ -1,6 +1,6 @@
 # NEZA - Sistema Integrado de Monitoramento e Gestão de Riscos Digitais
 
-**Powered By Muv** - [muv.co.mz](https://muv.co.mz)
+**Powered By Muv Educação & Engenharia** - [muv.co.mz](https://muv.co.mz)
 
 ## Visão Geral
 
@@ -78,4 +78,4 @@ Para rodar o projeto localmente para testes e novas integrações:
 3. O servidor emulará o ambiente e conectará ao seu banco automaticamente desde que a URI no `.env` esteja configurada.
 
 ---
-*Documentação desenvolvida para a Karingana Studio & MUV.*
+*Documentação desenvolvida para a Karingana Studio & Muv Educação & Engenharia.*
