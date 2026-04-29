@@ -249,6 +249,12 @@ function initChart() {
                 responsive: true,
                 maintainAspectRatio: false,
                 cutout: '80%',
+                animation: {
+                    animateScale: true,
+                    animateRotate: true,
+                    duration: 1200,
+                    easing: 'easeOutQuart'
+                },
                 plugins: {
                     legend: {
                         position: 'right',
@@ -282,6 +288,10 @@ function initChart() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: {
+                    duration: 1000,
+                    easing: 'easeOutBounce'
+                },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
